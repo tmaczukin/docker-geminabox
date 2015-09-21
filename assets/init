@@ -1,0 +1,27 @@
+#!/bin/bash
+
+echo -e "\033[1;37m=============================
+  hostname: \033[1;32m$(hostname -i)\033[1;37m
+=============================\033[0;0m"
+
+source /etc/rbenvrc
+
+case "$1" in
+    start)
+        echo "Starting supervisor..."
+        supervisord -n -c /etc/supervisor/supervisord.conf
+        ;;
+    *)
+        if [ -x $1 ]; then
+            $1
+        else
+            prog=$(which $1)
+            if [ -n "${prog}" ] ; then
+                shift 1
+                $prog $@
+            else
+                exit 255
+            fi
+        fi
+        ;;
+esac
